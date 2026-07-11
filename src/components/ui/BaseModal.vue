@@ -2,7 +2,7 @@
   <teleport to="body">
     <transition name="modal" appear>
       <div
-        v-if="modelValue"
+        v-if="modelValue || show"
         class="fixed inset-0 z-50 overflow-y-auto"
         aria-labelledby="modal-title"
         role="dialog"
@@ -26,7 +26,7 @@
             leave-to-class="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
             <div
-              v-if="modelValue"
+              v-if="modelValue || show"
               :class="modalClasses"
               @click.stop
             >
@@ -73,10 +73,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted } from 'vue'
+import { computed, onMounted, onUnmounted, watch } from 'vue'
 
 interface Props {
-  modelValue: boolean
+  modelValue?: boolean
+  show?: boolean
   title?: string
   size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full'
   closable?: boolean
@@ -86,6 +87,8 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  modelValue: false,
+  show: false,
   size: 'md',
   closable: true,
   closeOnOverlay: true,
@@ -95,6 +98,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
   'update:modelValue': [value: boolean]
+  'update:show': [value: boolean]
   close: []
 }>()
 
@@ -127,9 +131,12 @@ const bodyClasses = computed(() => {
   return ['px-6', 'py-4']
 })
 
+const isOpen = computed(() => !!(props.modelValue || props.show))
+
 const closeModal = () => {
   if (!props.persistent && props.closeOnOverlay) {
     emit('update:modelValue', false)
+    emit('update:show', false)
     emit('close')
   }
 }
@@ -140,12 +147,16 @@ const handleEscapeKey = (event: KeyboardEvent) => {
   }
 }
 
+watch(isOpen, (value) => {
+  if (value) {
+    document.body.style.overflow = 'hidden'
+  } else {
+    document.body.style.overflow = ''
+  }
+}, { immediate: true })
+
 onMounted(() => {
   document.addEventListener('keydown', handleEscapeKey)
-  // Prevent body scrolling when modal is open
-  if (props.modelValue) {
-    document.body.style.overflow = 'hidden'
-  }
 })
 
 onUnmounted(() => {
