@@ -187,6 +187,13 @@ export const useDashboardStore = defineStore('dashboard', () => {
     console.log('Marking notification as read:', id)
   }
 
+  const clearAlerts = () => {
+    if (stats.value) {
+      stats.value.lowStockAlerts = 0
+      stats.value.urgentTransactions = 0
+    }
+  }
+
   // System health check
   const performHealthCheck = async () => {
     return baseStore.handleApiCall(
@@ -328,6 +335,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
     removeNotification,
     clearAllNotifications,
     markNotificationAsRead,
+    clearAlerts,
     performHealthCheck,
 
     // Utility methods

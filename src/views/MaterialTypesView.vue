@@ -167,6 +167,7 @@
         v-model="formData"
         :errors="formErrors"
         @validate="handleFormValidation"
+        @cancel="handleModalClose"
       />
     </BaseModal>
 
@@ -185,12 +186,12 @@
           Are you sure you want to delete the material type "<strong>{{ materialTypeToDelete?.categoryName }}</strong>"?
         </p>
         
-        <div v-if="materialTypeToDelete?.assetCount > 0" class="bg-red-50 border border-red-200 rounded-lg p-3">
+        <div v-if="materialTypeToDelete && (materialTypeToDelete.assetCount ?? 0) > 0" class="bg-red-50 border border-red-200 rounded-lg p-3">
           <div class="flex items-start space-x-2">
             <i class="fas fa-exclamation-triangle text-red-500 mt-0.5"></i>
             <div class="text-red-700 text-sm">
               <p class="font-medium">Cannot delete this material type</p>
-              <p>This material type has {{ materialTypeToDelete.assetCount }} associated assets. Please reassign or delete these assets first.</p>
+              <p>This material type has {{ materialTypeToDelete?.assetCount }} associated assets. Please reassign or delete these assets first.</p>
             </div>
           </div>
         </div>
@@ -272,8 +273,8 @@ const filteredMaterialTypes = computed(() => {
 
   // Apply sorting
   materialTypes.sort((a, b) => {
-    const aVal = a[sortState.value.field as keyof typeof a]
-    const bVal = b[sortState.value.field as keyof typeof b]
+    const aVal = a[sortState.value.field as keyof typeof a] ?? ''
+    const bVal = b[sortState.value.field as keyof typeof b] ?? ''
     
     if (aVal < bVal) return sortState.value.direction === 'asc' ? -1 : 1
     if (aVal > bVal) return sortState.value.direction === 'asc' ? 1 : -1

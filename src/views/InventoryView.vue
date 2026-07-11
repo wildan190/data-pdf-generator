@@ -263,6 +263,7 @@
         v-model="formData"
         :errors="formErrors"
         @validate="handleFormValidation"
+        @cancel="handleModalClose"
       />
     </BaseModal>
 
@@ -423,7 +424,7 @@ const selectedAsset = ref<InventoryAssetWithStats | null>(null)
 const assetToDelete = ref<InventoryAssetWithStats | null>(null)
 
 // Filter state
-const filters = ref<InventoryAssetFilters>({})
+const filters = ref<InventoryAssetFilters & { minQuantity?: number | string; maxQuantity?: number | string }>({})
 
 // Table state
 const pagination = ref<PaginationState>({
@@ -475,8 +476,8 @@ const filteredAssets = computed(() => {
 
   // Apply sorting
   assets.sort((a, b) => {
-    const aVal = a[sortState.value.field as keyof typeof a]
-    const bVal = b[sortState.value.field as keyof typeof b]
+    const aVal = a[sortState.value.field as keyof typeof a] ?? ''
+    const bVal = b[sortState.value.field as keyof typeof b] ?? ''
     
     if (aVal < bVal) return sortState.value.direction === 'asc' ? -1 : 1
     if (aVal > bVal) return sortState.value.direction === 'asc' ? 1 : -1

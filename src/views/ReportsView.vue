@@ -164,7 +164,7 @@
             <div v-else class="space-y-2">
               <div
                 v-for="transaction in incomingTransactions.slice(0, 5)"
-                :key="transaction.id"
+                :key="transaction.transactionId"
                 class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
               >
                 <div class="flex-1">
@@ -279,7 +279,7 @@
             <div v-else class="space-y-2">
               <div
                 v-for="transaction in outgoingTransactions.slice(0, 5)"
-                :key="transaction.id"
+                :key="transaction.transactionId"
                 class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
               >
                 <div class="flex-1">
@@ -516,10 +516,11 @@ import { useDivisionStore } from '@/stores/division.store'
 import { useNotificationStore } from '@/stores/notification.store'
 import { exportService } from '@/services/export.service'
 import type { 
-  ReportAlartMasuk, 
-  ReportAlartKeluar, 
+  ReportAlatMasuk, 
+  ReportAlatKeluar, 
   ReportInvestment,
-  MaterialTransactionFilters 
+  MaterialTransactionFilters,
+  PaginationState
 } from '@/types'
 
 // Stores
@@ -561,10 +562,11 @@ const exportStatus = ref('')
 const exportError = ref('')
 
 // Investment pagination
-const investmentPagination = ref({
+const investmentPagination = ref<PaginationState>({
   page: 1,
-  limit: 10,
-  total: 0
+  pageSize: 10,
+  total: 0,
+  totalPages: 0
 })
 
 // Computed
@@ -618,8 +620,8 @@ const investmentColumns = computed(() => [
 
 const divisionOptions = computed(() =>
   divisionStore.divisions.map(division => ({
-    value: division.id,
-    label: division.name
+    value: division.divisionId,
+    label: division.divisionName
   }))
 )
 
@@ -667,7 +669,7 @@ const fetchIncomingReport = async () => {
   try {
     const filters = {
       ...incomingFilters.value,
-      transactionType: 'INCOMING' as const,
+      transactionType: 'masuk' as const,
       ...(incomingDateFrom.value && { dateFrom: new Date(incomingDateFrom.value) }),
       ...(incomingDateTo.value && { dateTo: new Date(incomingDateTo.value) })
     }
@@ -682,7 +684,7 @@ const fetchOutgoingReport = async () => {
   try {
     const filters = {
       ...outgoingFilters.value,
-      transactionType: 'OUTGOING' as const,
+      transactionType: 'keluar' as const,
       ...(outgoingDateFrom.value && { dateFrom: new Date(outgoingDateFrom.value) }),
       ...(outgoingDateTo.value && { dateTo: new Date(outgoingDateTo.value) })
     }
@@ -750,7 +752,9 @@ const handleMultiExport = async () => {
     // Simulate multi-export process
     for (let i = 0; i < selectedReports.length; i++) {
       const report = selectedReports[i]
-      exportStatus.value = `Processing ${report.title}...`
+      if (report) {
+        exportStatus.value = `Processing ${report.title}...`
+      }
       exportProgress.value = 10 + ((i + 1) / selectedReports.length) * 80
       
       // Add delay to simulate processing
@@ -838,8 +842,8 @@ onMounted(async () => {
   const thirtyDaysAgo = new Date(today)
   thirtyDaysAgo.setDate(today.getDate() - 30)
   
-  const todayStr = today.toISOString().split('T')[0]
-  const thirtyDaysAgoStr = thirtyDaysAgo.toISOString().split('T')[0]
+  const todayStr = today.toISOString().split('T')[0] ?? ''
+  const thirtyDaysAgoStr = thirtyDaysAgo.toISOString().split('T')[0] ?? ''
   
   incomingDateFrom.value = thirtyDaysAgoStr
   incomingDateTo.value = todayStr

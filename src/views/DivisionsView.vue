@@ -155,6 +155,7 @@
         v-model="formData"
         :errors="formErrors"
         @validate="handleFormValidation"
+        @cancel="handleModalClose"
       />
     </BaseModal>
 
@@ -173,12 +174,12 @@
           Are you sure you want to delete the division "<strong>{{ divisionToDelete?.divisionName }}</strong>"?
         </p>
         
-        <div v-if="divisionToDelete?.transactionCount > 0" class="bg-red-50 border border-red-200 rounded-lg p-3">
+        <div v-if="divisionToDelete && (divisionToDelete.transactionCount ?? 0) > 0" class="bg-red-50 border border-red-200 rounded-lg p-3">
           <div class="flex items-start space-x-2">
             <i class="fas fa-exclamation-triangle text-red-500 mt-0.5"></i>
             <div class="text-red-700 text-sm">
               <p class="font-medium">Cannot delete this division</p>
-              <p>This division has {{ divisionToDelete.transactionCount }} associated transactions. Please move or delete these transactions first.</p>
+              <p>This division has {{ divisionToDelete?.transactionCount }} associated transactions. Please move or delete these transactions first.</p>
             </div>
           </div>
         </div>

@@ -69,8 +69,16 @@
               v-if="showNotifications"
               class="absolute right-0 z-10 mt-2 w-72 sm:w-80 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
             >
-              <div class="px-4 py-3 border-b border-gray-200">
+              <div class="px-4 py-3 border-b border-gray-200 flex justify-between items-center">
                 <p class="text-sm font-medium text-gray-900">Notifications</p>
+                <button
+                  v-if="totalAlerts > 0"
+                  type="button"
+                  @click="handleMarkAllAsRead"
+                  class="text-xs font-semibold text-primary-600 hover:text-primary-800 transition-colors"
+                >
+                  Mark all as read
+                </button>
               </div>
 
               <div v-if="dashboardStats" class="px-4 py-3 space-y-2">
@@ -188,6 +196,13 @@ const quickActionsRef = ref<HTMLElement | null>(null)
 const emit = defineEmits<{
   'quick-action': [action: string]
 }>()
+
+const handleMarkAllAsRead = () => {
+  if (dashboardStore.stats) {
+    dashboardStore.stats.lowStockAlerts = 0
+    dashboardStore.stats.urgentTransactions = 0
+  }
+}
 
 const navigation = [
   {

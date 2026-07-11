@@ -45,7 +45,7 @@ import { computed, useSlots } from 'vue'
 
 interface Props {
   modelValue?: string | number
-  type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'search'
+  type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'search' | 'date'
   label?: string
   placeholder?: string
   disabled?: boolean

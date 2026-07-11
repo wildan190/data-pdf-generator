@@ -21,13 +21,13 @@ export class DivisionRepository
 
   async findById(id: number): Promise<Division | null> {
     return this.prisma.division.findUnique({
-      where: { divisionId: id }
+      where: { divisionId: Number(id) }
     })
   }
 
   async findByIdWithTransactions(id: number): Promise<DivisionWithTransactions | null> {
     return this.prisma.division.findUnique({
-      where: { divisionId: id },
+      where: { divisionId: Number(id) },
       include: {
         transactions: {
           include: {
@@ -93,7 +93,7 @@ export class DivisionRepository
     }
 
     return this.prisma.division.update({
-      where: { divisionId: id },
+      where: { divisionId: Number(id) },
       data
     })
   }
@@ -107,7 +107,7 @@ export class DivisionRepository
 
     // Check if division has associated transactions
     const transactionCount = await this.prisma.materialTransaction.count({
-      where: { divisionId: id }
+      where: { divisionId: Number(id) }
     })
 
     if (transactionCount > 0) {
@@ -115,7 +115,7 @@ export class DivisionRepository
     }
 
     await this.prisma.division.delete({
-      where: { divisionId: id }
+      where: { divisionId: Number(id) }
     })
   }
 
