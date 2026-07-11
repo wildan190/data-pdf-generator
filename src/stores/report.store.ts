@@ -222,9 +222,7 @@ export const useReportStore = defineStore('report', () => {
           dateRange: options.dateRange
         }
 
-        return apiClient.post(`/reports/export`, exportData, {
-          responseType: 'blob' // For file download
-        } as any)
+        return apiClient.post(`/reports/export`, exportData)
       },
       () => {} // Handle file download in the response
     )
@@ -350,6 +348,11 @@ export const useReportStore = defineStore('report', () => {
     baseStore.resetState()
   }
 
+  // Aliases for compatibility with ReportsView
+  const fetchIncomingReport = generateIncomingReport
+  const fetchOutgoingReport = generateOutgoingReport
+  const fetchInvestmentReport = generateInvestmentReport
+
   return {
     // State
     incomingReport: computed(() => incomingReport.value),
@@ -385,6 +388,9 @@ export const useReportStore = defineStore('report', () => {
     generateStockMovementReport,
     exportReport,
     getReportForExport,
+    fetchIncomingReport,
+    fetchOutgoingReport,
+    fetchInvestmentReport,
 
     // Utility methods
     setFilters,

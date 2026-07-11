@@ -18,6 +18,7 @@ export interface IInventoryAssetService {
   getByIdWithRelations(id: number): Promise<ApiResponse<InventoryAssetWithRelations>>
   getAll(pagination?: PaginationQuery): Promise<ApiResponse<InventoryAsset[]>>
   getAllWithCategory(pagination?: PaginationQuery): Promise<ApiResponse<InventoryAssetWithCategory[]>>
+  getAllWithStats(): Promise<ApiResponse<Array<InventoryAssetWithCategory & { transactionCount: number }>>>
   getByCategoryId(categoryId: number, pagination?: PaginationQuery): Promise<ApiResponse<InventoryAsset[]>>
   getByName(name: string): Promise<ApiResponse<InventoryAsset | null>>
   create(data: CreateInventoryAssetServiceData): Promise<ApiResponse<InventoryAsset>>
@@ -116,6 +117,12 @@ export class InventoryAssetService
       () => this.inventoryAssetRepository.count(),
       pagination
     )
+  }
+
+  async getAllWithStats(): Promise<ApiResponse<Array<InventoryAssetWithCategory & { transactionCount: number }>>> {
+    return this.handleOperation(async () => {
+      return this.inventoryAssetRepository.getAllWithStats()
+    })
   }
 
   async getByCategoryId(categoryId: number, pagination?: PaginationQuery): Promise<ApiResponse<InventoryAsset[]>> {

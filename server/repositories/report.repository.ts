@@ -284,14 +284,7 @@ export class ReportRepository {
         where: {
           createdAt: { gte: startDate, lte: endDate }
         },
-        _count: true,
-        include: {
-          division: {
-            select: {
-              divisionName: true
-            }
-          }
-        }
+        _count: true
       })
     ])
 

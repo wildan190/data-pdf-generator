@@ -5,9 +5,7 @@
         <!-- Logo and title -->
         <div class="flex items-center">
           <div class="flex-shrink-0 flex items-center">
-            <svg class="h-8 w-8 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-            </svg>
+            <Package class="h-8 w-8 text-primary-600" />
             <h1 class="ml-3 text-xl font-semibold text-gray-900">
               Inventory Manager
             </h1>
@@ -35,16 +33,14 @@
         <!-- Right side -->
         <div class="flex items-center space-x-4">
           <!-- Notifications -->
-          <div class="relative">
+          <div class="relative" ref="notificationsRef">
             <button
               type="button"
               class="relative rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
               @click="showNotifications = !showNotifications"
             >
               <span class="sr-only">View notifications</span>
-              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+              <Bell class="h-6 w-6" />
               <span v-if="totalAlerts > 0" class="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-xs text-white flex items-center justify-center">
                 {{ totalAlerts > 9 ? '9+' : totalAlerts }}
               </span>
@@ -61,16 +57,12 @@
               
               <div v-if="dashboardStats" class="px-4 py-3 space-y-2">
                 <div v-if="dashboardStats.lowStockAlerts > 0" class="flex items-center text-sm text-yellow-600">
-                  <svg class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                  </svg>
+                  <AlertTriangle class="h-4 w-4 mr-2" />
                   {{ dashboardStats.lowStockAlerts }} low stock alerts
                 </div>
                 
                 <div v-if="dashboardStats.urgentTransactions > 0" class="flex items-center text-sm text-red-600">
-                  <svg class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
+                  <AlertCircle class="h-4 w-4 mr-2" />
                   {{ dashboardStats.urgentTransactions }} urgent transactions
                 </div>
                 
@@ -82,15 +74,13 @@
           </div>
 
           <!-- Quick actions -->
-          <div class="relative">
+          <div class="relative" ref="quickActionsRef">
             <button
               type="button"
               class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
               @click="showQuickActions = !showQuickActions"
             >
-              <svg class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-              </svg>
+              <Plus class="h-4 w-4 mr-1" />
               Quick Add
             </button>
 
@@ -119,9 +109,7 @@
             @click="mobileMenuOpen = !mobileMenuOpen"
           >
             <span class="sr-only">Open main menu</span>
-            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
+            <Menu class="h-6 w-6" />
           </button>
         </div>
       </div>
@@ -150,9 +138,24 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onClickOutside } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useDashboardStore } from '../../stores/dashboard.store'
+import {
+  Home,
+  Building2,
+  Tag,
+  Box,
+  ArrowRightLeft,
+  BarChart3,
+  AlertCircle,
+  Plus,
+  Menu,
+  CheckCircle2,
+  AlertTriangle,
+  Bell,
+  Package
+} from '@lucide/vue'
 
 const dashboardStore = useDashboardStore()
 const { stats: dashboardStats } = storeToRefs(dashboardStore)
@@ -160,6 +163,8 @@ const { stats: dashboardStats } = storeToRefs(dashboardStore)
 const showNotifications = ref(false)
 const showQuickActions = ref(false)
 const mobileMenuOpen = ref(false)
+const notificationsRef = ref<HTMLElement | null>(null)
+const quickActionsRef = ref<HTMLElement | null>(null)
 
 const emit = defineEmits<{
   'quick-action': [action: string]
@@ -169,32 +174,27 @@ const navigation = [
   {
     name: 'Dashboard',
     to: '/',
-    icon: 'HomeIcon'
+    icon: Home
   },
   {
     name: 'Divisions',
     to: '/divisions',
-    icon: 'BuildingOfficeIcon'
+    icon: Building2
   },
   {
     name: 'Material Types',
     to: '/material-types',
-    icon: 'TagIcon'
+    icon: Tag
   },
   {
     name: 'Inventory',
     to: '/inventory',
-    icon: 'CubeIcon'
-  },
-  {
-    name: 'Transactions',
-    to: '/transactions',
-    icon: 'ArrowsRightLeftIcon'
+    icon: Box
   },
   {
     name: 'Reports',
     to: '/reports',
-    icon: 'DocumentChartBarIcon'
+    icon: BarChart3
   }
 ]
 
@@ -202,22 +202,22 @@ const quickActions = [
   {
     name: 'Add Division',
     action: 'add-division',
-    icon: 'BuildingOfficeIcon'
+    icon: Building2
   },
   {
     name: 'Add Material Type',
     action: 'add-material-type',
-    icon: 'TagIcon'
+    icon: Tag
   },
   {
     name: 'Add Asset',
     action: 'add-asset',
-    icon: 'CubeIcon'
+    icon: Box
   },
   {
     name: 'New Transaction',
     action: 'add-transaction',
-    icon: 'ArrowsRightLeftIcon'
+    icon: ArrowRightLeft
   }
 ]
 
@@ -232,12 +232,21 @@ const handleQuickAction = (action: string) => {
 }
 
 // Close dropdowns when clicking outside
-onClickOutside(showNotifications, () => {
-  showNotifications.value = false
+const handleClickOutside = (event: MouseEvent) => {
+  if (notificationsRef.value && !notificationsRef.value.contains(event.target as Node)) {
+    showNotifications.value = false
+  }
+  if (quickActionsRef.value && !quickActionsRef.value.contains(event.target as Node)) {
+    showQuickActions.value = false
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside)
 })
 
-onClickOutside(showQuickActions, () => {
-  showQuickActions.value = false
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside)
 })
 
 onMounted(async () => {

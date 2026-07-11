@@ -17,6 +17,7 @@ export const useInventoryAssetStore = defineStore('inventoryAsset', () => {
 
   // State
   const assets = ref<InventoryAssetWithCategory[]>([])
+  const assetsWithStats = ref<InventoryAssetWithStats[]>([])
   const selectedAsset = ref<InventoryAssetWithCategory | null>(null)
   const lowStockAssets = ref<InventoryAssetWithCategory[]>([])
   const zeroStockAssets = ref<InventoryAssetWithCategory[]>([])
@@ -113,6 +114,16 @@ export const useInventoryAssetStore = defineStore('inventoryAsset', () => {
     )
   }
 
+  const fetchAssetsWithStats = async () => {
+    return baseStore.handleApiCall(
+      'fetchAssetsWithStats',
+      () => apiClient.get<InventoryAssetWithStats[]>('/inventory-assets/with-stats'),
+      (data) => {
+        assetsWithStats.value = data
+      }
+    )
+  }
+
   const fetchAssetById = async (id: number) => {
     return baseStore.handleApiCall(
       'fetchAssetById',
@@ -155,11 +166,15 @@ export const useInventoryAssetStore = defineStore('inventoryAsset', () => {
         const index = assets.value.findIndex(a => a.assetId === id)
         if (index !== -1) {
           // Preserve category info
-          const existingCategory = assets.value[index].category
-          assets.value[index] = { ...data, category: existingCategory }
+          const existingCategory = assets.value[index]?.category
+          if (existingCategory !== undefined) {
+            assets.value[index] = { ...data, category: existingCategory }
+          } else {
+            assets.value[index] = { ...data, category: undefined }
+          }
         }
         if (selectedAsset.value?.assetId === id) {
-          const existingCategory = selectedAsset.value.category
+          const existingCategory = selectedAsset.value?.category
           selectedAsset.value = { ...data, category: existingCategory }
         }
       }
@@ -371,6 +386,7 @@ export const useInventoryAssetStore = defineStore('inventoryAsset', () => {
   return {
     // State
     assets: computed(() => assets.value),
+    assetsWithStats: computed(() => assetsWithStats.value),
     selectedAsset: computed(() => selectedAsset.value),
     lowStockAssets: computed(() => lowStockAssets.value),
     zeroStockAssets: computed(() => zeroStockAssets.value),
@@ -395,6 +411,7 @@ export const useInventoryAssetStore = defineStore('inventoryAsset', () => {
 
     // Actions
     fetchAssets,
+    fetchAssetsWithStats,
     fetchAssetById,
     fetchAssetWithRelations,
     createAsset,

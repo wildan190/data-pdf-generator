@@ -42,17 +42,6 @@
       />
     </BaseModal>
 
-    <BaseModal
-      v-model="showTransactionModal"
-      title="New Transaction"
-      size="lg"
-    >
-      <MaterialTransactionForm
-        @success="handleTransactionSuccess"
-        @cancel="showTransactionModal = false"
-      />
-    </BaseModal>
-
     <!-- Global notification container -->
     <NotificationContainer />
   </div>
@@ -61,7 +50,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import type { Division, MaterialType, InventoryAsset, MaterialTransaction } from '../../types'
 
 // Components
 import AppHeader from './AppHeader.vue'
@@ -69,7 +57,6 @@ import BaseModal from '../ui/BaseModal.vue'
 import DivisionForm from '../forms/DivisionForm.vue'
 import MaterialTypeForm from '../forms/MaterialTypeForm.vue'
 import InventoryAssetForm from '../forms/InventoryAssetForm.vue'
-import MaterialTransactionForm from '../forms/MaterialTransactionForm.vue'
 import NotificationContainer from '../ui/NotificationContainer.vue'
 
 const router = useRouter()
@@ -78,7 +65,6 @@ const router = useRouter()
 const showDivisionModal = ref(false)
 const showMaterialTypeModal = ref(false)
 const showAssetModal = ref(false)
-const showTransactionModal = ref(false)
 
 // Quick action handlers
 const handleQuickAction = (action: string) => {
@@ -92,14 +78,11 @@ const handleQuickAction = (action: string) => {
     case 'add-asset':
       showAssetModal.value = true
       break
-    case 'add-transaction':
-      showTransactionModal.value = true
-      break
   }
 }
 
 // Success handlers
-const handleDivisionSuccess = (division: Division) => {
+const handleDivisionSuccess = () => {
   showDivisionModal.value = false
   // Optionally navigate to divisions page or refresh current view
   if (router.currentRoute.value.path !== '/divisions') {
@@ -107,24 +90,17 @@ const handleDivisionSuccess = (division: Division) => {
   }
 }
 
-const handleMaterialTypeSuccess = (materialType: MaterialType) => {
+const handleMaterialTypeSuccess = () => {
   showMaterialTypeModal.value = false
   if (router.currentRoute.value.path !== '/material-types') {
     router.push('/material-types')
   }
 }
 
-const handleAssetSuccess = (asset: InventoryAsset) => {
+const handleAssetSuccess = () => {
   showAssetModal.value = false
   if (router.currentRoute.value.path !== '/inventory') {
     router.push('/inventory')
-  }
-}
-
-const handleTransactionSuccess = (transaction: MaterialTransaction) => {
-  showTransactionModal.value = false
-  if (router.currentRoute.value.path !== '/transactions') {
-    router.push('/transactions')
   }
 }
 </script>

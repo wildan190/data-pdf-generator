@@ -299,6 +299,33 @@ export class InventoryAssetRepository
     }))
   }
 
+  async getAllWithStats(): Promise<Array<InventoryAssetWithCategory & { transactionCount: number }>> {
+    const assets = await this.prisma.inventoryAsset.findMany({
+      include: {
+        category: true,
+        _count: {
+          select: {
+            transactions: true
+          }
+        }
+      },
+      orderBy: {
+        materialName: 'asc'
+      }
+    })
+
+    return assets.map(asset => ({
+      assetId: asset.assetId,
+      materialName: asset.materialName,
+      categoryId: asset.categoryId,
+      currentQuantity: asset.currentQuantity,
+      unitMeasure: asset.unitMeasure,
+      lastUpdatedAt: asset.lastUpdatedAt,
+      category: asset.category,
+      transactionCount: asset._count.transactions
+    }))
+  }
+
   async getStockSummary(): Promise<{
     totalAssets: number
     totalStockValue: number

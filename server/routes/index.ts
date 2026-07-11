@@ -5,9 +5,11 @@ import inventoryAssetRoutes from './inventory-asset.routes'
 import materialTransactionRoutes from './material-transaction.routes'
 import reportRoutes from './report.routes'
 import exportRoutes from './export.routes'
+import dashboardRoutes from './dashboard.routes'
 
 const router = Router()
 
+router.use('/dashboard', dashboardRoutes)
 router.use('/divisions', divisionRoutes)
 router.use('/material-types', materialTypeRoutes)
 router.use('/inventory-assets', inventoryAssetRoutes)

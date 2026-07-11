@@ -41,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, useSlots } from 'vue'
 
 interface Props {
   modelValue?: string | number
@@ -51,7 +51,7 @@ interface Props {
   disabled?: boolean
   readonly?: boolean
   required?: boolean
-  error?: string
+  error?: string | null
   hint?: string
   id?: string
   size?: 'sm' | 'md' | 'lg'
@@ -64,6 +64,8 @@ const props = withDefaults(defineProps<Props>(), {
   required: false,
   size: 'md'
 })
+
+const slots = useSlots()
 
 const emit = defineEmits<{
   'update:modelValue': [value: string | number]
@@ -103,8 +105,8 @@ const inputClasses = computed(() => {
 
   // Padding adjustments for prefix/suffix
   const paddingClasses = []
-  if (props.$slots?.prefix) paddingClasses.push('pl-10')
-  if (props.$slots?.suffix) paddingClasses.push('pr-10')
+  if (slots.prefix) paddingClasses.push('pl-10')
+  if (slots.suffix) paddingClasses.push('pr-10')
 
   return [
     ...baseClasses,

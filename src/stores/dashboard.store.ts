@@ -18,7 +18,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
   const lowStockAssets = ref<InventoryAssetWithCategory[]>([])
   const urgentTransactions = ref<MaterialTransactionWithRelations[]>([])
   const notifications = ref<Notification[]>([])
-  const refreshInterval = ref<NodeJS.Timeout | null>(null)
+  const refreshInterval = ref<number | null>(null)
   const autoRefreshEnabled = ref(false)
   const refreshIntervalMs = ref(30000) // 30 seconds
 
@@ -191,7 +191,7 @@ export const useDashboardStore = defineStore('dashboard', () => {
   const performHealthCheck = async () => {
     return baseStore.handleApiCall(
       'performHealthCheck',
-      () => apiClient.get('/dashboard/health-check'),
+      () => apiClient.get<{ healthy: boolean, message: string }>('/dashboard/health-check'),
       (data) => {
         if (!data.healthy) {
           addNotification({

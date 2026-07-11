@@ -25,7 +25,7 @@ export interface MultiReportExportRequest {
 }
 
 export class ExportService {
-  private readonly baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+  private readonly baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
 
   // Export single report
   async exportReport(
@@ -335,7 +335,13 @@ export class ExportService {
 
     for (let i = 0; i < exports.length; i++) {
       try {
-        const { reportType, options } = exports[i]
+        const currentExport = exports[i]
+        if (!currentExport) {
+          results.failed++
+          results.errors.push(`Export at index ${i} is undefined`)
+          continue
+        }
+        const { reportType, options } = currentExport
         const response = await this.exportReport(reportType, options)
         
         if (response.success) {
@@ -347,7 +353,9 @@ export class ExportService {
         }
       } catch (error) {
         results.failed++
-        results.errors.push(`${exports[i].reportType}: ${ExportUtils.handleExportError(error)}`)
+        const reportType = currentExport?.reportType ?? `Export at index ${i}`;
+
+        results.errors.push(`${reportType}: ${ExportUtils.handleExportError(error)}`)
       }
 
       // Report progress
