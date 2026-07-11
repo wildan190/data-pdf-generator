@@ -1,0 +1,85 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Division model - Organization units
+model Division {
+  divisionId   Int      @id @default(autoincrement()) @map("division_id")
+  divisionName String   @unique @map("division_name") @db.VarChar(100)
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  // Relations
+  transactions MaterialTransaction[]
+
+  @@map("divisions")
+}
+
+// Material Types/Categories model
+model MaterialType {
+  categoryId   Int      @id @default(autoincrement()) @map("category_id")
+  categoryName String   @unique @map("category_name") @db.VarChar(100)
+  description  String?  @db.Text
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  // Relations
+  assets InventoryAsset[]
+
+  @@map("material_types")
+}
+
+// Inventory Assets model - Main inventory registry
+model InventoryAsset {
+  assetId         Int      @id @default(autoincrement()) @map("asset_id")
+  materialName    String   @unique @map("material_name") @db.VarChar(255)
+  categoryId      Int?     @map("category_id")
+  currentQuantity Int      @default(0) @map("current_quantity")
+  unitMeasure     String   @default("pcs") @map("unit_measure") @db.VarChar(50)
+  lastUpdatedAt   DateTime @default(now()) @updatedAt @map("last_updated_at")
+
+  // Relations
+  category     MaterialType?         @relation(fields: [categoryId], references: [categoryId], onDelete: SetNull)
+  transactions MaterialTransaction[]
+
+  @@map("inventory_assets")
+}
+
+// Material Transactions model - Form input data for incoming & outgoing
+model MaterialTransaction {
+  transactionId   Int                @id @default(autoincrement()) @map("transaction_id")
+  assetId         Int                @map("asset_id")
+  divisionId      Int                @map("division_id")
+  quantity        Int
+  transactionType TransactionType    @map("transaction_type")
+  priorityStatus  PriorityStatus     @map("priority_status")
+  notes           String?            @db.Text
+  createdAt       DateTime           @default(now()) @map("created_at")
+
+  // Relations
+  asset    InventoryAsset @relation(fields: [assetId], references: [assetId], onDelete: Cascade)
+  division Division       @relation(fields: [divisionId], references: [divisionId], onDelete: Restrict)
+
+  @@map("material_transactions")
+}
+
+// Enums
+enum TransactionType {
+  masuk  // Incoming
+  keluar // Outgoing
+
+  @@map("transaction_type")
+}
+
+enum PriorityStatus {
+  prioritas // High Priority
+  urgen     // Urgent
+  trivial   // Low Priority
+
+  @@map("priority_status")
+}
