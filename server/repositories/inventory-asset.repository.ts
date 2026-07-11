@@ -18,8 +18,8 @@ export interface IInventoryAssetRepository {
   findAllWithCategory(pagination?: PaginationQuery): Promise<InventoryAssetWithCategory[]>
   findByName(name: string): Promise<InventoryAsset | null>
   findByCategoryId(categoryId: number, pagination?: PaginationQuery): Promise<InventoryAsset[]>
-  create(data: CreateInventoryAssetData): Promise<InventoryAsset>
-  update(id: number, data: UpdateInventoryAssetData): Promise<InventoryAsset>
+  create(data: CreateInventoryAssetData): Promise<InventoryAssetWithCategory>
+  update(id: number, data: UpdateInventoryAssetData): Promise<InventoryAssetWithCategory>
   updateQuantity(id: number, quantityChange: number): Promise<InventoryAsset>
   delete(id: number): Promise<void>
   count(): Promise<number>
@@ -143,11 +143,14 @@ export class InventoryAssetRepository
         categoryId: categoryId,
         unitMeasure: data.unitMeasure || 'pcs',
         currentQuantity: data.initialQuantity || 0
+      },
+      include: {
+        category: true
       }
     })
   }
 
-  async update(id: number, data: UpdateInventoryAssetData): Promise<InventoryAsset> {
+  async update(id: number, data: UpdateInventoryAssetData): Promise<InventoryAssetWithCategory> {
     // Check if asset exists
     const existing = await this.findById(id)
     if (!existing) {
@@ -184,6 +187,9 @@ export class InventoryAssetRepository
         materialName: data.materialName,
         categoryId: categoryId,
         unitMeasure: data.unitMeasure
+      },
+      include: {
+        category: true
       }
     })
   }

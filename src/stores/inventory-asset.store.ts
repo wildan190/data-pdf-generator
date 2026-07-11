@@ -145,14 +145,9 @@ export const useInventoryAssetStore = defineStore('inventoryAsset', () => {
   const createAsset = async (formData: CreateInventoryAssetForm) => {
     return baseStore.handleApiCall(
       'createAsset',
-      () => apiClient.post<InventoryAsset>('/inventory-assets', formData),
+      () => apiClient.post<InventoryAssetWithCategory>('/inventory-assets', formData),
       (data) => {
-        // Convert to InventoryAssetWithCategory for consistency
-        const assetWithCategory: InventoryAssetWithCategory = {
-          ...data,
-          category: undefined // Will be populated by refresh
-        }
-        assets.value.push(assetWithCategory)
+        assets.value.push(data)
         pagination.value.total += 1
       }
     )
@@ -161,21 +156,14 @@ export const useInventoryAssetStore = defineStore('inventoryAsset', () => {
   const updateAsset = async (id: number, formData: Partial<CreateInventoryAssetForm>) => {
     return baseStore.handleApiCall(
       'updateAsset',
-      () => apiClient.put<InventoryAsset>(`/inventory-assets/${id}`, formData),
+      () => apiClient.put<InventoryAssetWithCategory>(`/inventory-assets/${id}`, formData),
       (data) => {
         const index = assets.value.findIndex(a => a.assetId === id)
         if (index !== -1) {
-          // Preserve category info
-          const existingCategory = assets.value[index]?.category
-          if (existingCategory !== undefined) {
-            assets.value[index] = { ...data, category: existingCategory }
-          } else {
-            assets.value[index] = { ...data, category: undefined }
-          }
+          assets.value[index] = data
         }
         if (selectedAsset.value?.assetId === id) {
-          const existingCategory = selectedAsset.value?.category
-          selectedAsset.value = { ...data, category: existingCategory }
+          selectedAsset.value = data
         }
       }
     )

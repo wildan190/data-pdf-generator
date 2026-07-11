@@ -21,8 +21,8 @@ export interface IInventoryAssetService {
   getAllWithStats(): Promise<ApiResponse<Array<InventoryAssetWithCategory & { transactionCount: number }>>>
   getByCategoryId(categoryId: number, pagination?: PaginationQuery): Promise<ApiResponse<InventoryAsset[]>>
   getByName(name: string): Promise<ApiResponse<InventoryAsset | null>>
-  create(data: CreateInventoryAssetServiceData): Promise<ApiResponse<InventoryAsset>>
-  update(id: number, data: UpdateInventoryAssetServiceData): Promise<ApiResponse<InventoryAsset>>
+  create(data: CreateInventoryAssetServiceData): Promise<ApiResponse<InventoryAssetWithCategory>>
+  update(id: number, data: UpdateInventoryAssetServiceData): Promise<ApiResponse<InventoryAssetWithCategory>>
   delete(id: number): Promise<ApiResponse<void>>
   getLowStockAssets(threshold?: number): Promise<ApiResponse<InventoryAssetWithCategory[]>>
   getZeroStockAssets(): Promise<ApiResponse<InventoryAssetWithCategory[]>>
@@ -146,7 +146,7 @@ export class InventoryAssetService
     })
   }
 
-  async create(data: CreateInventoryAssetServiceData): Promise<ApiResponse<InventoryAsset>> {
+  async create(data: CreateInventoryAssetServiceData): Promise<ApiResponse<InventoryAssetWithCategory>> {
     return this.handleOperation(async () => {
       // Validate input data
       await this.validateCreateData(data)
@@ -166,7 +166,7 @@ export class InventoryAssetService
     })
   }
 
-  async update(id: number, data: UpdateInventoryAssetServiceData): Promise<ApiResponse<InventoryAsset>> {
+  async update(id: number, data: UpdateInventoryAssetServiceData): Promise<ApiResponse<InventoryAssetWithCategory>> {
     return this.handleOperation(async () => {
       this.validateId(id)
       await this.validateUpdateData(data)
