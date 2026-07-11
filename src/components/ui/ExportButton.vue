@@ -1,5 +1,5 @@
 <template>
-  <div class="relative inline-block">
+  <div class="relative inline-block" ref="dropdownRef">
     <!-- Main Export Button -->
     <BaseButton
       :variant="variant"
@@ -101,6 +101,7 @@ const emit = defineEmits<{
 const notificationStore = useNotificationStore()
 
 // Reactive state
+const dropdownRef = ref<HTMLElement | null>(null)
 const isExporting = ref(false)
 const dropdownOpen = ref(false)
 const showCustomDialog = ref(false)
@@ -194,9 +195,8 @@ const closeDropdown = (event: MouseEvent) => {
   if (!dropdownOpen.value) return
   
   const target = event.target as HTMLElement
-  const button = document.querySelector('.relative.inline-block')
   
-  if (button && !button.contains(target)) {
+  if (dropdownRef.value && !dropdownRef.value.contains(target)) {
     dropdownOpen.value = false
   }
 }

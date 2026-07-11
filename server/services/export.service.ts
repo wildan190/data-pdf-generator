@@ -174,7 +174,7 @@ export class ExportService {
       const doc = new PDFKit({ margin: 40 })
       const buffers: Buffer[] = []
       
-      doc.on('data', buffers.push.bind(buffers))
+      doc.on('data', (chunk) => buffers.push(chunk))
       doc.on('end', () => {
         const pdfBuffer = Buffer.concat(buffers)
         resolve(pdfBuffer)

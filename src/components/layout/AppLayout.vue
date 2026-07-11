@@ -42,6 +42,17 @@
       />
     </BaseModal>
 
+    <BaseModal
+      v-model="showTransactionModal"
+      title="New Transaction"
+      size="lg"
+    >
+      <MaterialTransactionForm
+        @success="handleTransactionSuccess"
+        @cancel="showTransactionModal = false"
+      />
+    </BaseModal>
+
     <!-- Global notification container -->
     <NotificationContainer />
     
@@ -60,6 +71,7 @@ import BaseModal from '../ui/BaseModal.vue'
 import DivisionForm from '../forms/DivisionForm.vue'
 import MaterialTypeForm from '../forms/MaterialTypeForm.vue'
 import InventoryAssetForm from '../forms/InventoryAssetForm.vue'
+import MaterialTransactionForm from '../forms/MaterialTransactionForm.vue'
 import NotificationContainer from '../ui/NotificationContainer.vue'
 import UserGuidePanel from '../ui/UserGuidePanel.vue'
 
@@ -69,6 +81,7 @@ const router = useRouter()
 const showDivisionModal = ref(false)
 const showMaterialTypeModal = ref(false)
 const showAssetModal = ref(false)
+const showTransactionModal = ref(false)
 
 // Quick action handlers
 const handleQuickAction = (action: string) => {
@@ -81,6 +94,9 @@ const handleQuickAction = (action: string) => {
       break
     case 'add-asset':
       showAssetModal.value = true
+      break
+    case 'add-transaction':
+      showTransactionModal.value = true
       break
   }
 }
@@ -105,6 +121,13 @@ const handleAssetSuccess = () => {
   showAssetModal.value = false
   if (router.currentRoute.value.path !== '/inventory') {
     router.push('/inventory')
+  }
+}
+
+const handleTransactionSuccess = () => {
+  showTransactionModal.value = false
+  if (router.currentRoute.value.path !== '/reports') {
+    router.push('/reports')
   }
 }
 </script>

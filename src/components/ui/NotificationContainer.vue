@@ -1,6 +1,6 @@
 <template>
   <div class="fixed inset-0 flex items-end justify-center px-4 py-6 pointer-events-none sm:items-start sm:justify-end sm:p-6 z-50">
-    <div class="flex flex-col items-center space-y-4 sm:items-end">
+    <div class="flex flex-col items-center space-y-4 sm:items-end w-full sm:w-96">
       <NotificationToast
         v-for="notification in notifications"
         :key="notification.id"
