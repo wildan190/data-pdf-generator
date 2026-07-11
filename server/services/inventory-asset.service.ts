@@ -16,10 +16,10 @@ export interface IInventoryAssetService {
   getById(id: number): Promise<ApiResponse<InventoryAsset>>
   getByIdWithCategory(id: number): Promise<ApiResponse<InventoryAssetWithCategory>>
   getByIdWithRelations(id: number): Promise<ApiResponse<InventoryAssetWithRelations>>
-  getAll(pagination?: PaginationQuery): Promise<ApiResponse<InventoryAsset[]>>
+  getAll(pagination?: PaginationQuery): Promise<ApiResponse<InventoryAssetWithCategory[]>>
   getAllWithCategory(pagination?: PaginationQuery): Promise<ApiResponse<InventoryAssetWithCategory[]>>
   getAllWithStats(): Promise<ApiResponse<Array<InventoryAssetWithCategory & { transactionCount: number }>>>
-  getByCategoryId(categoryId: number, pagination?: PaginationQuery): Promise<ApiResponse<InventoryAsset[]>>
+  getByCategoryId(categoryId: number, pagination?: PaginationQuery): Promise<ApiResponse<InventoryAssetWithCategory[]>>
   getByName(name: string): Promise<ApiResponse<InventoryAsset | null>>
   create(data: CreateInventoryAssetServiceData): Promise<ApiResponse<InventoryAssetWithCategory>>
   update(id: number, data: UpdateInventoryAssetServiceData): Promise<ApiResponse<InventoryAssetWithCategory>>
@@ -103,7 +103,7 @@ export class InventoryAssetService
     })
   }
 
-  async getAll(pagination?: PaginationQuery): Promise<ApiResponse<InventoryAsset[]>> {
+  async getAll(pagination?: PaginationQuery): Promise<ApiResponse<InventoryAssetWithCategory[]>> {
     return this.handlePaginatedOperation(
       () => this.inventoryAssetRepository.findAll(pagination),
       () => this.inventoryAssetRepository.count(),
@@ -125,7 +125,7 @@ export class InventoryAssetService
     })
   }
 
-  async getByCategoryId(categoryId: number, pagination?: PaginationQuery): Promise<ApiResponse<InventoryAsset[]>> {
+  async getByCategoryId(categoryId: number, pagination?: PaginationQuery): Promise<ApiResponse<InventoryAssetWithCategory[]>> {
     return this.handleOperation(async () => {
       this.validateId(categoryId)
       

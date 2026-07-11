@@ -151,17 +151,25 @@ export class MaterialTransactionService
 
   async create(data: CreateMaterialTransactionServiceData): Promise<ApiResponse<MaterialTransaction>> {
     return this.handleOperation(async () => {
+      // Normalize / convert string IDs and numbers to actual numbers
+      const normalizedData = {
+        ...data,
+        assetId: typeof data.assetId === 'string' ? Number(data.assetId) : data.assetId,
+        divisionId: typeof data.divisionId === 'string' ? Number(data.divisionId) : data.divisionId,
+        quantity: typeof data.quantity === 'string' ? Number(data.quantity) : data.quantity
+      }
+
       // Validate input data
-      await this.validateCreateData(data)
+      await this.validateCreateData(normalizedData)
 
       // Sanitize and prepare data
       const createData: CreateMaterialTransactionData = {
-        assetId: data.assetId,
-        divisionId: data.divisionId,
-        quantity: data.quantity,
-        transactionType: data.transactionType,
-        priorityStatus: data.priorityStatus,
-        notes: data.notes ? this.sanitizeString(data.notes) : undefined
+        assetId: normalizedData.assetId,
+        divisionId: normalizedData.divisionId,
+        quantity: normalizedData.quantity,
+        transactionType: normalizedData.transactionType,
+        priorityStatus: normalizedData.priorityStatus,
+        notes: normalizedData.notes ? this.sanitizeString(normalizedData.notes) : undefined
       }
 
       // Business rule: For outgoing transactions, check stock availability (handled by repository)

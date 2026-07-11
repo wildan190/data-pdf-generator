@@ -11,13 +11,13 @@ import {
 
 // Inventory Asset repository interface
 export interface IInventoryAssetRepository {
-  findById(id: number): Promise<InventoryAsset | null>
+  findById(id: number): Promise<InventoryAssetWithCategory | null>
   findByIdWithCategory(id: number): Promise<InventoryAssetWithCategory | null>
   findByIdWithRelations(id: number): Promise<InventoryAssetWithRelations | null>
-  findAll(pagination?: PaginationQuery): Promise<InventoryAsset[]>
+  findAll(pagination?: PaginationQuery): Promise<InventoryAssetWithCategory[]>
   findAllWithCategory(pagination?: PaginationQuery): Promise<InventoryAssetWithCategory[]>
-  findByName(name: string): Promise<InventoryAsset | null>
-  findByCategoryId(categoryId: number, pagination?: PaginationQuery): Promise<InventoryAsset[]>
+  findByName(name: string): Promise<InventoryAssetWithCategory | null>
+  findByCategoryId(categoryId: number, pagination?: PaginationQuery): Promise<InventoryAssetWithCategory[]>
   create(data: CreateInventoryAssetData): Promise<InventoryAssetWithCategory>
   update(id: number, data: UpdateInventoryAssetData): Promise<InventoryAssetWithCategory>
   updateQuantity(id: number, quantityChange: number): Promise<InventoryAsset>
@@ -27,22 +27,20 @@ export interface IInventoryAssetRepository {
 
 // Inventory Asset repository implementation
 export class InventoryAssetRepository 
-  extends BaseRepository<InventoryAsset, CreateInventoryAssetData, UpdateInventoryAssetData> 
+  extends BaseRepository<InventoryAssetWithCategory, CreateInventoryAssetData, UpdateInventoryAssetData> 
   implements IInventoryAssetRepository {
 
-  async findById(id: number): Promise<InventoryAsset | null> {
-    return this.prisma.inventoryAsset.findUnique({
-      where: { assetId: id }
-    })
-  }
-
-  async findByIdWithCategory(id: number): Promise<InventoryAssetWithCategory | null> {
+  async findById(id: number): Promise<InventoryAssetWithCategory | null> {
     return this.prisma.inventoryAsset.findUnique({
       where: { assetId: id },
       include: {
         category: true
       }
     })
+  }
+
+  async findByIdWithCategory(id: number): Promise<InventoryAssetWithCategory | null> {
+    return this.findById(id)
   }
 
   async findByIdWithRelations(id: number): Promise<InventoryAssetWithRelations | null> {
@@ -62,7 +60,7 @@ export class InventoryAssetRepository
     })
   }
 
-  async findAll(pagination?: PaginationQuery): Promise<InventoryAsset[]> {
+  async findAll(pagination?: PaginationQuery): Promise<InventoryAssetWithCategory[]> {
     const { skip, take } = pagination 
       ? this.calculatePagination(pagination.page, pagination.pageSize)
       : { skip: undefined, take: undefined }
@@ -70,6 +68,9 @@ export class InventoryAssetRepository
     return this.prisma.inventoryAsset.findMany({
       skip,
       take,
+      include: {
+        category: true
+      },
       orderBy: {
         materialName: 'asc'
       }
@@ -93,13 +94,16 @@ export class InventoryAssetRepository
     })
   }
 
-  async findByName(name: string): Promise<InventoryAsset | null> {
+  async findByName(name: string): Promise<InventoryAssetWithCategory | null> {
     return this.prisma.inventoryAsset.findUnique({
-      where: { materialName: name }
+      where: { materialName: name },
+      include: {
+        category: true
+      }
     })
   }
 
-  async findByCategoryId(categoryId: number, pagination?: PaginationQuery): Promise<InventoryAsset[]> {
+  async findByCategoryId(categoryId: number, pagination?: PaginationQuery): Promise<InventoryAssetWithCategory[]> {
     const { skip, take } = pagination 
       ? this.calculatePagination(pagination.page, pagination.pageSize)
       : { skip: undefined, take: undefined }
@@ -108,13 +112,16 @@ export class InventoryAssetRepository
       where: { categoryId },
       skip,
       take,
+      include: {
+        category: true
+      },
       orderBy: {
         materialName: 'asc'
       }
     })
   }
 
-  async create(data: CreateInventoryAssetData): Promise<InventoryAsset> {
+  async create(data: CreateInventoryAssetData): Promise<InventoryAssetWithCategory> {
     // Check if material name already exists
     const existing = await this.findByName(data.materialName)
     if (existing) {
@@ -191,7 +198,7 @@ export class InventoryAssetRepository
       include: {
         category: true
       }
-    })
+    }) as unknown as Promise<InventoryAssetWithCategory>
   }
 
   async updateQuantity(id: number, quantityChange: number): Promise<InventoryAsset> {
