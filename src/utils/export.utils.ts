@@ -98,7 +98,7 @@ export class ExportUtils {
 
   // Check browser support for download
   static isBrowserSupported(): boolean {
-    return !!(window.URL && window.URL.createObjectURL && document.createElement)
+    return typeof window !== 'undefined' && typeof document !== 'undefined' && !!window.URL && !!window.URL.createObjectURL
   }
 
   // Get format display name

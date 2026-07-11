@@ -113,9 +113,14 @@ export const useMaterialTypeStore = defineStore('materialType', () => {
         // Also update in materialTypesWithStats
         const statsIndex = materialTypesWithStats.value.findIndex(mt => mt.categoryId === id)
         if (statsIndex !== -1) {
-          materialTypesWithStats.value[statsIndex] = {
-            ...materialTypesWithStats.value[statsIndex],
-            ...data
+          const currentStats = materialTypesWithStats.value[statsIndex]
+          if (currentStats) {
+            materialTypesWithStats.value[statsIndex] = {
+              ...currentStats,
+              ...data,
+              assetCount: currentStats.assetCount,
+              totalStockQuantity: currentStats.totalStockQuantity
+            }
           }
         }
         

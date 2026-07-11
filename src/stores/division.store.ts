@@ -99,9 +99,13 @@ export const useDivisionStore = defineStore('division', () => {
         // Also update in divisionsWithStats
         const statsIndex = divisionsWithStats.value.findIndex(d => d.divisionId === id)
         if (statsIndex !== -1) {
-          divisionsWithStats.value[statsIndex] = {
-            ...divisionsWithStats.value[statsIndex],
-            ...data
+          const currentStats = divisionsWithStats.value[statsIndex]
+          if (currentStats) {
+            divisionsWithStats.value[statsIndex] = {
+              ...currentStats,
+              ...data,
+              transactionCount: currentStats.transactionCount
+            }
           }
         }
         

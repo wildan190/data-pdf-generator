@@ -334,8 +334,8 @@ export class ExportService {
     }
 
     for (let i = 0; i < exports.length; i++) {
+      const currentExport = exports[i]
       try {
-        const currentExport = exports[i]
         if (!currentExport) {
           results.failed++
           results.errors.push(`Export at index ${i} is undefined`)

@@ -158,7 +158,7 @@ export const useMaterialTransactionStore = defineStore('materialTransaction', ()
       'fetchTransactionSummary',
       () => apiClient.get(`/material-transactions/summary?${queryParams}`),
       (data) => {
-        transactionSummary.value = data
+        transactionSummary.value = data as any
       }
     )
   }

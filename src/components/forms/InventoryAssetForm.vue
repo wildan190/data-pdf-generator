@@ -14,7 +14,7 @@
       label="Category"
       placeholder="Select a category"
       :options="categoryOptions"
-      :error="errors.categoryId"
+      :error="errors.categoryId ?? undefined"
       hint="Select the material category"
       @blur="validateField('categoryId')"
     />
@@ -34,7 +34,7 @@
         v-model="form.unitMeasure"
         label="Unit of Measure"
         :options="unitOptions"
-        :error="errors.unitMeasure"
+        :error="errors.unitMeasure ?? undefined"
         @blur="validateField('unitMeasure')"
       />
     </div>
@@ -122,7 +122,7 @@ const unitOptions = computed(() => {
 
 const isFormValid = computed(() => {
   return form.materialName.trim().length >= 3 && 
-         form.unitMeasure && 
+         !!form.unitMeasure && 
          (form.initialQuantity === undefined || form.initialQuantity >= 0) &&
          !Object.values(errors).some(Boolean)
 })

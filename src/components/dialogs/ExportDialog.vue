@@ -296,8 +296,8 @@ const priorityStatusOptions = computed(() => [
 
 const divisionOptions = computed(() => 
   divisionStore.divisions.map(division => ({
-    value: division.id,
-    label: division.name
+    value: division.divisionId,
+    label: division.divisionName
   }))
 )
 
@@ -427,7 +427,7 @@ onMounted(async () => {
   const thirtyDaysAgo = new Date(today)
   thirtyDaysAgo.setDate(today.getDate() - 30)
   
-  dateTo.value = today.toISOString().split('T')[0]
-  dateFrom.value = thirtyDaysAgo.toISOString().split('T')[0]
+  dateTo.value = today.toISOString().split('T')[0] ?? ''
+  dateFrom.value = thirtyDaysAgo.toISOString().split('T')[0] ?? ''
 })
 </script>

@@ -6,7 +6,7 @@
       placeholder="Select material"
       required
       :options="assetOptions"
-      :error="errors.assetId"
+      :error="errors.assetId ?? undefined"
       @change="onAssetChange"
       @blur="validateField('assetId')"
     />
@@ -24,7 +24,7 @@
         label="Transaction Type"
         required
         :options="transactionTypeOptions"
-        :error="errors.transactionType"
+        :error="errors.transactionType ?? undefined"
         @change="onTransactionTypeChange"
         @blur="validateField('transactionType')"
       />
@@ -48,7 +48,7 @@
         placeholder="Select division"
         required
         :options="divisionOptions"
-        :error="errors.divisionId"
+        :error="errors.divisionId ?? undefined"
         @blur="validateField('divisionId')"
       />
 
@@ -57,7 +57,7 @@
         label="Priority"
         required
         :options="priorityOptions"
-        :error="errors.priorityStatus"
+        :error="errors.priorityStatus ?? undefined"
         @blur="validateField('priorityStatus')"
       />
     </div>
@@ -167,8 +167,8 @@ const errors = reactive<FormErrors>({
   notes: null
 })
 
-const transactionTypeOptions = computed(() => TRANSACTION_TYPES)
-const priorityOptions = computed(() => PRIORITY_STATUSES)
+const transactionTypeOptions = computed(() => [...TRANSACTION_TYPES])
+const priorityOptions = computed(() => [...PRIORITY_STATUSES])
 
 const quantityHint = computed(() => {
   if (selectedAsset.value && form.transactionType === 'keluar') {

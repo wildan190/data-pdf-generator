@@ -136,9 +136,9 @@ export const useDashboardStore = defineStore('dashboard', () => {
     refreshIntervalMs.value = intervalMs
     autoRefreshEnabled.value = true
     
-    refreshInterval.value = setInterval(async () => {
+    refreshInterval.value = window.setInterval(async () => {
       await refreshDashboard()
-    }, intervalMs)
+    }, intervalMs) as unknown as number
   }
 
   const stopAutoRefresh = () => {

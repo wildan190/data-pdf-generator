@@ -96,7 +96,7 @@ const validateField = async (field: keyof CreateDivisionForm) => {
       if (!props.editMode || form.divisionName !== props.division?.divisionName) {
         const validation = await divisionStore.validateDivisionName(form.divisionName)
         if (!validation.isValid) {
-          errors.divisionName = validation.message
+          errors.divisionName = validation.message ?? null
         }
       }
       break

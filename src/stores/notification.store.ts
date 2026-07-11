@@ -121,8 +121,8 @@ export const useNotificationStore = defineStore('notification', () => {
     success('Success', message)
   }
 
-  const handleApiError = (error: string | Error, context?: string) => {
-    const errorMessage = error instanceof Error ? error.message : error
+  const handleApiError = (apiError: string | Error, context?: string) => {
+    const errorMessage = apiError instanceof Error ? apiError.message : apiError
     const title = context ? `${context} Failed` : 'Operation Failed'
     error(title, errorMessage)
   }
