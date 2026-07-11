@@ -89,6 +89,12 @@ export const useMaterialTypeStore = defineStore('materialType', () => {
       () => apiClient.post<MaterialType>('/material-types', formData),
       (data) => {
         materialTypes.value.push(data)
+        // Also add to materialTypesWithStats with 0 assets
+        materialTypesWithStats.value.push({
+          ...data,
+          assetCount: 0,
+          totalStockQuantity: 0
+        })
         pagination.value.total += 1
       }
     )
@@ -103,6 +109,16 @@ export const useMaterialTypeStore = defineStore('materialType', () => {
         if (index !== -1) {
           materialTypes.value[index] = data
         }
+        
+        // Also update in materialTypesWithStats
+        const statsIndex = materialTypesWithStats.value.findIndex(mt => mt.categoryId === id)
+        if (statsIndex !== -1) {
+          materialTypesWithStats.value[statsIndex] = {
+            ...materialTypesWithStats.value[statsIndex],
+            ...data
+          }
+        }
+        
         if (selectedMaterialType.value?.categoryId === id) {
           selectedMaterialType.value = data
         }

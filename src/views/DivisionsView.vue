@@ -1,34 +1,40 @@
 <template>
   <div class="space-y-6">
     <!-- Page Header -->
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div>
-        <h1 class="text-2xl font-bold text-gray-900">Divisions</h1>
+        <div class="flex items-center space-x-3">
+          <h1 class="text-2xl font-bold text-gray-900">Divisions</h1>
+          <TooltipGuide
+            title="Divisions Management"
+            content="Organize your inventory by departments or organizational units."
+            :steps="[
+              'Use Quick Add to create new divisions',
+              'Click on division cards to view details',
+              'Monitor transaction counts per division',
+              'Track which divisions are most active'
+            ]"
+            position="bottom-right"
+          />
+        </div>
         <p class="text-gray-600">Manage organizational divisions</p>
       </div>
       
-      <div class="flex items-center space-x-3">
+      <div class="flex items-center justify-end">
         <BaseButton
           variant="secondary"
           :loading="isLoading"
           @click="refreshData"
+          class="w-full sm:w-auto"
         >
           <i class="fas fa-sync-alt mr-2"></i>
           Refresh
-        </BaseButton>
-        
-        <BaseButton
-          variant="primary"
-          @click="showCreateModal = true"
-        >
-          <i class="fas fa-plus mr-2"></i>
-          Add Division
         </BaseButton>
       </div>
     </div>
 
     <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
       <div class="bg-white p-6 rounded-lg shadow border border-gray-200">
         <div class="flex items-center justify-between">
           <div>
@@ -192,6 +198,7 @@ import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseInput from '@/components/ui/BaseInput.vue'
 import BaseTable from '@/components/ui/BaseTable.vue'
 import BaseModal from '@/components/ui/BaseModal.vue'
+import TooltipGuide from '@/components/ui/TooltipGuide.vue'
 import DivisionForm from '@/components/forms/DivisionForm.vue'
 import { useDivisionStore } from '@/stores/division.store'
 import { useNotificationStore } from '@/stores/notification.store'
@@ -359,6 +366,8 @@ const handleSubmit = async () => {
       })
     }
 
+    // Refresh data to show the new item in the table
+    await refreshData()
     handleModalClose()
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Operation failed'

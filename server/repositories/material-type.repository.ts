@@ -21,13 +21,13 @@ export class MaterialTypeRepository
 
   async findById(id: number): Promise<MaterialType | null> {
     return this.prisma.materialType.findUnique({
-      where: { categoryId: id }
+      where: { categoryId: Number(id) }
     })
   }
 
   async findByIdWithAssets(id: number): Promise<MaterialTypeWithAssets | null> {
     return this.prisma.materialType.findUnique({
-      where: { categoryId: id },
+      where: { categoryId: Number(id) },
       include: {
         assets: {
           orderBy: {

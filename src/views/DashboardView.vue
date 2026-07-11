@@ -3,9 +3,22 @@
     <!-- Page header -->
     <div class="md:flex md:items-center md:justify-between">
       <div class="min-w-0 flex-1">
-        <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
-          Dashboard
-        </h2>
+        <div class="flex items-center space-x-3">
+          <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
+            Dashboard
+          </h2>
+          <TooltipGuide
+            title="Dashboard Overview"
+            content="Monitor your inventory at a glance with key metrics, recent activities, and system alerts."
+            :steps="[
+              'Check notification bell for important alerts',
+              'Use Quick Add to create new entries',
+              'Review recent activities for updates',
+              'Monitor low stock and urgent transactions'
+            ]"
+            position="bottom-right"
+          />
+        </div>
         <p class="mt-1 text-sm text-gray-500">
           Inventory management overview and key metrics
         </p>
@@ -229,6 +242,7 @@ import { onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useDashboardStore } from '../stores/dashboard.store'
 import BaseButton from '../components/ui/BaseButton.vue'
+import TooltipGuide from '../components/ui/TooltipGuide.vue'
 
 const dashboardStore = useDashboardStore()
 const {

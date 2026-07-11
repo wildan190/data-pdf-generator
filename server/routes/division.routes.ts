@@ -4,6 +4,17 @@ import { getDivisionService } from '../services'
 const router = Router()
 const divisionService = getDivisionService()
 
+// Get all divisions with stats
+router.get('/stats', async (req, res) => {
+  try {
+    const result = await divisionService.getDivisionsWithStats()
+    res.json(result)
+  } catch (error) {
+    console.error('Get divisions with stats error:', error)
+    res.status(500).json({ success: false, error: 'Failed to get divisions with stats' })
+  }
+})
+
 // Get all divisions
 router.get('/', async (req, res) => {
   try {

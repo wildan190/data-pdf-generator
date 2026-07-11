@@ -1,34 +1,40 @@
 <template>
   <div class="space-y-6">
     <!-- Page Header -->
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div>
-        <h1 class="text-2xl font-bold text-gray-900">Inventory Assets</h1>
+        <div class="flex items-center space-x-3">
+          <h1 class="text-2xl font-bold text-gray-900">Inventory Assets</h1>
+          <TooltipGuide
+            title="Inventory Management"
+            content="Track all your inventory items, stock levels, and asset information."
+            :steps="[
+              'Use filters to find specific items quickly',
+              'Red indicators show critical stock levels',
+              'Use Quick Add for new inventory assets',
+              'Monitor quantity changes and alerts'
+            ]"
+            position="bottom-right"
+          />
+        </div>
         <p class="text-gray-600">Manage inventory assets and stock levels</p>
       </div>
       
-      <div class="flex items-center space-x-3">
+      <div class="flex items-center justify-end">
         <BaseButton
           variant="secondary"
           :loading="isLoading"
           @click="refreshData"
+          class="w-full sm:w-auto"
         >
           <i class="fas fa-sync-alt mr-2"></i>
           Refresh
-        </BaseButton>
-        
-        <BaseButton
-          variant="primary"
-          @click="showCreateModal = true"
-        >
-          <i class="fas fa-plus mr-2"></i>
-          Add Asset
         </BaseButton>
       </div>
     </div>
 
     <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
       <div class="bg-white p-6 rounded-lg shadow border border-gray-200">
         <div class="flex items-center justify-between">
           <div>
@@ -371,6 +377,7 @@ import BaseInput from '@/components/ui/BaseInput.vue'
 import BaseSelect from '@/components/ui/BaseSelect.vue'
 import BaseTable from '@/components/ui/BaseTable.vue'
 import BaseModal from '@/components/ui/BaseModal.vue'
+import TooltipGuide from '@/components/ui/TooltipGuide.vue'
 import InventoryAssetForm from '@/components/forms/InventoryAssetForm.vue'
 import { useInventoryAssetStore } from '@/stores/inventory-asset.store'
 import { useMaterialTypeStore } from '@/stores/material-type.store'

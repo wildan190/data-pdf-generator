@@ -15,14 +15,14 @@ export interface CreateMaterialTransactionData {
 
 export interface CreateInventoryAssetData {
   materialName: string
-  categoryId?: number
+  categoryId?: number | string
   unitMeasure?: string
   initialQuantity?: number
 }
 
 export interface UpdateInventoryAssetData {
   materialName?: string
-  categoryId?: number
+  categoryId?: number | string
   unitMeasure?: string
 }
 

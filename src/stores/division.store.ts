@@ -76,6 +76,11 @@ export const useDivisionStore = defineStore('division', () => {
       () => apiClient.post<Division>('/divisions', formData),
       (data) => {
         divisions.value.push(data)
+        // Also add to divisionsWithStats with 0 transactions
+        divisionsWithStats.value.push({
+          ...data,
+          transactionCount: 0
+        })
         pagination.value.total += 1
       }
     )
@@ -90,6 +95,16 @@ export const useDivisionStore = defineStore('division', () => {
         if (index !== -1) {
           divisions.value[index] = data
         }
+        
+        // Also update in divisionsWithStats
+        const statsIndex = divisionsWithStats.value.findIndex(d => d.divisionId === id)
+        if (statsIndex !== -1) {
+          divisionsWithStats.value[statsIndex] = {
+            ...divisionsWithStats.value[statsIndex],
+            ...data
+          }
+        }
+        
         if (selectedDivision.value?.divisionId === id) {
           selectedDivision.value = data
         }

@@ -4,7 +4,7 @@
     <AppHeader @quick-action="handleQuickAction" />
 
     <!-- Main content -->
-    <main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+    <main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
       <router-view />
     </main>
 
@@ -44,6 +44,9 @@
 
     <!-- Global notification container -->
     <NotificationContainer />
+    
+    <!-- User guide panel -->
+    <UserGuidePanel />
   </div>
 </template>
 
@@ -58,6 +61,7 @@ import DivisionForm from '../forms/DivisionForm.vue'
 import MaterialTypeForm from '../forms/MaterialTypeForm.vue'
 import InventoryAssetForm from '../forms/InventoryAssetForm.vue'
 import NotificationContainer from '../ui/NotificationContainer.vue'
+import UserGuidePanel from '../ui/UserGuidePanel.vue'
 
 const router = useRouter()
 

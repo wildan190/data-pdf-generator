@@ -1,7 +1,56 @@
 <template>
-  <div class="overflow-hidden bg-white shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-    <!-- Table -->
-    <div class="overflow-x-auto">
+  <div class="overflow-hidden bg-white shadow ring-1 ring-black ring-opacity-5 rounded-lg">
+    <!-- Mobile Card View (hidden on desktop) -->
+    <div class="block sm:hidden">
+      <div v-if="loading" class="space-y-3 p-4">
+        <div v-for="n in 5" :key="n" class="bg-gray-50 rounded-lg p-4 animate-pulse">
+          <div class="space-y-2">
+            <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+            <div class="h-3 bg-gray-200 rounded w-1/2"></div>
+            <div class="h-3 bg-gray-200 rounded w-2/3"></div>
+          </div>
+        </div>
+      </div>
+      
+      <div v-else-if="data.length === 0" class="p-8 text-center">
+        <slot name="empty">
+          <div class="text-gray-500">
+            <div class="mx-auto h-12 w-12 text-gray-400">
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                <path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+              </svg>
+            </div>
+            <h3 class="mt-2 text-sm font-medium text-gray-900">No data</h3>
+            <p class="mt-1 text-sm text-gray-500">No records found.</p>
+          </div>
+        </slot>
+      </div>
+      
+      <div v-else class="divide-y divide-gray-200">
+        <div
+          v-for="(item, index) in data"
+          :key="getItemKey(item, index)"
+          class="p-4 hover:bg-gray-50 cursor-pointer"
+          @click="$emit('row-click', item, index)"
+        >
+          <slot name="mobile-card" :item="item" :index="index">
+            <!-- Default mobile card layout -->
+            <div class="space-y-2">
+              <div v-for="column in columns.slice(0, 3)" :key="column.key" class="flex justify-between">
+                <span class="text-sm font-medium text-gray-600">{{ column.label }}:</span>
+                <span class="text-sm text-gray-900">{{ formatCellValue(item, column) }}</span>
+              </div>
+              <div v-if="$slots.actions" class="flex justify-end pt-2 border-t border-gray-100">
+                <slot name="actions" :item="item" :index="index" />
+              </div>
+            </div>
+          </slot>
+        </div>
+      </div>
+    </div>
+
+    <!-- Desktop Table View (hidden on mobile) -->
+    <div class="hidden sm:block overflow-x-auto">
       <table class="min-w-full divide-y divide-gray-300">
         <!-- Header -->
         <thead class="bg-gray-50">
@@ -111,7 +160,7 @@
 
     <!-- Pagination -->
     <div v-if="pagination" class="bg-white px-4 py-3 border-t border-gray-200 sm:px-6">
-      <div class="flex items-center justify-between">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
         <div class="flex items-center text-sm text-gray-700">
           <span>
             Showing {{ (pagination.page - 1) * pagination.pageSize + 1 }} to 
@@ -129,6 +178,10 @@
           >
             Previous
           </BaseButton>
+          
+          <span class="px-3 py-1 text-sm text-gray-600">
+            {{ pagination.page }} / {{ pagination.totalPages }}
+          </span>
           
           <BaseButton
             size="sm"

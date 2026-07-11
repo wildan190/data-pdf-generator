@@ -123,18 +123,24 @@ export class InventoryAssetRepository
 
     // Validate category exists if provided
     if (data.categoryId) {
+      const categoryId = typeof data.categoryId === 'string' ? Number(data.categoryId) : data.categoryId
       const category = await this.prisma.materialType.findUnique({
-        where: { categoryId: data.categoryId }
+        where: { categoryId: categoryId }
       })
       if (!category) {
-        throw new NotFoundError('MaterialType', data.categoryId)
+        throw new NotFoundError('MaterialType', categoryId)
       }
     }
+
+    // Convert categoryId to number if it's a string
+    const categoryId = data.categoryId 
+      ? (typeof data.categoryId === 'string' ? Number(data.categoryId) : data.categoryId)
+      : null
 
     return this.prisma.inventoryAsset.create({
       data: {
         materialName: data.materialName,
-        categoryId: data.categoryId,
+        categoryId: categoryId,
         unitMeasure: data.unitMeasure || 'pcs',
         currentQuantity: data.initialQuantity || 0
       }
@@ -158,19 +164,25 @@ export class InventoryAssetRepository
 
     // Validate category exists if being updated
     if (data.categoryId) {
+      const categoryId = typeof data.categoryId === 'string' ? Number(data.categoryId) : data.categoryId
       const category = await this.prisma.materialType.findUnique({
-        where: { categoryId: data.categoryId }
+        where: { categoryId: categoryId }
       })
       if (!category) {
-        throw new NotFoundError('MaterialType', data.categoryId)
+        throw new NotFoundError('MaterialType', categoryId)
       }
     }
+
+    // Convert categoryId to number if it's a string
+    const categoryId = data.categoryId 
+      ? (typeof data.categoryId === 'string' ? Number(data.categoryId) : data.categoryId)
+      : undefined
 
     return this.prisma.inventoryAsset.update({
       where: { assetId: id },
       data: {
         materialName: data.materialName,
-        categoryId: data.categoryId,
+        categoryId: categoryId,
         unitMeasure: data.unitMeasure
       }
     })

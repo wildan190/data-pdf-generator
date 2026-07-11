@@ -4,6 +4,17 @@ import { getMaterialTypeService } from '../services'
 const router = Router()
 const materialTypeService = getMaterialTypeService()
 
+// Get all material types with stats
+router.get('/stats', async (req, res) => {
+  try {
+    const result = await materialTypeService.getTypesWithStats()
+    res.json(result)
+  } catch (error) {
+    console.error('Get material types with stats error:', error)
+    res.status(500).json({ success: false, error: 'Failed to get material types with stats' })
+  }
+})
+
 // Get all material types
 router.get('/', async (req, res) => {
   try {

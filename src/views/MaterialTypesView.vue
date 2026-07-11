@@ -1,34 +1,40 @@
 <template>
   <div class="space-y-6">
     <!-- Page Header -->
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div>
-        <h1 class="text-2xl font-bold text-gray-900">Material Types</h1>
+        <div class="flex items-center space-x-3">
+          <h1 class="text-2xl font-bold text-gray-900">Material Types</h1>
+          <TooltipGuide
+            title="Material Categories"
+            content="Organize your inventory by defining material categories and types."
+            :steps="[
+              'Use Quick Add to create new material types',
+              'Group similar materials under same category',
+              'View how many assets belong to each type',
+              'Edit categories to keep organization current'
+            ]"
+            position="bottom-right"
+          />
+        </div>
         <p class="text-gray-600">Manage material categories and types</p>
       </div>
       
-      <div class="flex items-center space-x-3">
+      <div class="flex items-center justify-end">
         <BaseButton
           variant="secondary"
           :loading="isLoading"
           @click="refreshData"
+          class="w-full sm:w-auto"
         >
           <i class="fas fa-sync-alt mr-2"></i>
           Refresh
-        </BaseButton>
-        
-        <BaseButton
-          variant="primary"
-          @click="showCreateModal = true"
-        >
-          <i class="fas fa-plus mr-2"></i>
-          Add Material Type
         </BaseButton>
       </div>
     </div>
 
     <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
       <div class="bg-white p-6 rounded-lg shadow border border-gray-200">
         <div class="flex items-center justify-between">
           <div>
@@ -375,6 +381,8 @@ const handleSubmit = async () => {
       })
     }
 
+    // Refresh data to show the new item in the table
+    await refreshData()
     handleModalClose()
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Operation failed'
