@@ -154,7 +154,7 @@ export function useBaseStore<T>(storeName: string) {
 
 // API Client utilities (will be replaced with actual HTTP client)
 export class ApiClient {
-  private baseUrl = 'http://localhost:3001/api'
+  private baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
 
   private async request<T>(
     endpoint: string,
